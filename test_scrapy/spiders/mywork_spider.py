@@ -1,8 +1,5 @@
 import scrapy
 import re
-import json
-# import time
-from random import randint
 from datetime import date
 
 
@@ -31,8 +28,8 @@ class myworkspider(scrapy.Spider):
         with open("page_mywork.txt", 'a') as f:
             f.write(next_page + "\n")
         #test
-        if self.count < 2:
-            yield scrapy.Request(next_page, callback=self.parse)
+        # if self.count < 2:
+        yield scrapy.Request(next_page, callback=self.parse)
 
 
     def job_parse(self, response):

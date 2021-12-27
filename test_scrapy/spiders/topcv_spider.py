@@ -1,9 +1,7 @@
 import scrapy
 import re
-import json
 from datetime import date
 import time
-from random import randint
 from scrapy.http import FormRequest
 
 class topcvspider(scrapy.Spider):

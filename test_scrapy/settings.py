@@ -21,10 +21,10 @@ FEED_EXPORTERS = {
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = False
-DOWNLOADER_MIDDLEWARES = {
-    'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,
-    'scrapy_fake_useragent.middleware.RandomUserAgentMiddleware': 400,
-}
+# DOWNLOADER_MIDDLEWARES = {
+#     'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,
+#     'scrapy_fake_useragent.middleware.RandomUserAgentMiddleware': 400,
+# }
 ITEM_PIPELINES = {
     'test_scrapy.pipelines.TestScrapyPipeline': 300,
 }

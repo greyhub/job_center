@@ -29,7 +29,7 @@ ITEM_PIPELINES = {
     'test_scrapy.pipelines.TestScrapyPipeline': 300,
 }
 MONGO_URI = 'mongodb://127.0.0.1:27017/'
-MONGO_DATABASE = 'crawl'
+MONGO_DATABASE = 'test'
 
 # DOWNLOAD_DELAY = 7
 # Configure maximum concurrent requests performed by Scrapy (default: 16)

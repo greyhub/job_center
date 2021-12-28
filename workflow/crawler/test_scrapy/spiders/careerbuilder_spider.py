@@ -29,22 +29,24 @@ class careerspider(scrapy.Spider):
                 time.sleep(randint(5, 10))
                 yield scrapy.Request(job_url[0], callback=self.job_parse)
         except:
-            with open("careerbuilder/error_url.txt", 'a') as f:
-                f.write("url_job_error: " + response.url + "\n")
-            f.close()
+            # with open("careerbuilder/error_url.txt", 'a') as f:
+            #     f.write("url_job_error: " + response.url + "\n")
+            # f.close()
+            print()
         try:
             next_page = response.css('.next-page>a::attr(href)').get()
             # time.sleep(randint(3, 10))
-            with open("careerbuilder/page_url.txt", 'a') as f:
-                f.write(next_page + "\n")
-            f.close()
-            self.count += 1
-            if self.count < 2:
-                yield response.follow(next_page, callback=self.parse)
+            # with open("careerbuilder/page_url.txt", 'a') as f:
+            #     f.write(next_page + "\n")
+            # f.close()
+            # self.count += 1
+            # if self.count < 2:
+            yield response.follow(next_page, callback=self.parse)
         except:
-            with open("careerbuilder/error_url.txt", 'a') as f:
-                f.write("url_page_error: " + response.url + "\n")
-            f.close()
+            # with open("careerbuilder/error_url.txt", 'a') as f:
+            #     f.write("url_page_error: " + response.url + "\n")
+            # f.close()
+            print()
         # time.sleep(randint(10, 15))
 
     def job_parse(self, response):
@@ -139,7 +141,5 @@ class careerspider(scrapy.Spider):
 
 
         except:
-            with open("careerbuilder/error_url.txt", 'a') as f:
-                f.write(response.url + "\n")
-            f.close()
+            print()
 

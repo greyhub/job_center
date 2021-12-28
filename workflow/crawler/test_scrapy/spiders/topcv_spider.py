@@ -44,11 +44,9 @@ class topcvspider(scrapy.Spider):
         # time.sleep(randint(5, 10))
         try:
             next_page = response.css('a[rel="next"]::attr(href)').get()
-            with open("topcv/page_topcv.txt", 'a') as f:
-                f.write(next_page + "\n")
             yield scrapy.Request(next_page, callback=self.url_parse)
         except:
-            print("Page error: " + response.url)
+            print()
 
 
     def job_parse(self, response):
@@ -133,8 +131,7 @@ class topcvspider(scrapy.Spider):
 
             yield job
         except:
-            with open("topcv/error_topcv.txt", 'a') as f:
-                f.write(response.url + "\n")
+            print()
 
 
 

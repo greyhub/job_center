@@ -13,7 +13,7 @@ class myworkspider(scrapy.Spider):
     base_page = 'https://mywork.com.vn/tuyen-dung?branch=mw.all&action=search&page='
     count = 1
     custom_settings = {
-        'COLLECTION_NAME': 'mywork_test'
+        'COLLECTION_NAME': 'mywork'
     }
 
     def parse(self, response):
@@ -25,8 +25,6 @@ class myworkspider(scrapy.Spider):
 
         self.count += 1
         next_page = self.base_page + str(self.count)
-        with open("mywork/page_mywork.txt", 'a') as f:
-            f.write(next_page + "\n")
         #test
         if self.count < 75:
             yield scrapy.Request(next_page, callback=self.parse)
@@ -133,7 +131,7 @@ class myworkspider(scrapy.Spider):
 
             yield job
         except:
-            print('Job_url error: ' + response.url)
+            print()
 
 
 

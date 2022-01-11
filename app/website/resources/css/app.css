@@ -1,0 +1,19 @@
+body {
+    font-family: 'Lato';
+}
+.fa-btn {
+    margin-right: 6px;
+}
+#lang {
+    margin-right: 50px;
+    margin-bottom: 20px;
+}
+
+.dark.ftco-section.footer1 {
+    height: 500px;
+}
+
+.row.justify-content-center {
+    margin-bottom: 50px;
+    margin-top: 50px;
+}

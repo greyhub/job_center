@@ -1,17 +1,12 @@
-import pandas as pd
-import seaborn as sns
-import matplotlib.pyplot as plt
+from datetime import datetime
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
+from termcolor import colored
 
+from exploratory.prediction.utils import trans_data
+from config import TEMP_STORAGE
 
-def get_unique(col_name, df):
-    return list(df[col_name].unique())
-
-def trans_data(val, col_name, trans_dict):
-    res = trans_dict[col_name][val]
-    return res
-
-def get_label_from_salary(s):
-    return s['label']
 
 def setup():
     trans_dict = {}
@@ -78,49 +73,17 @@ def setup():
         6:'25 - 30 triệu', 
         7:'Trên 30 triệu'
     }    
-    return
+    return trans_dict
 
-def read_data():
-    data_dir = "../EDA/data/"
-
-    __path_to_df = '../../../database/data_center/dataCenter.csv'
-    __df = pd.read_csv(__path_to_df)
-
-    __cols = ['sectors',
-     'salary_label',
-     'job_attributes',
-     'job_formality',
-     'required_gender_specific',
-     'job_experience_years',
-     'job_requirements',
-     'company_name',
-     'company_address']
-
-    __df = __df[__cols]
-    __df['source'] = 'jobCenter'
-
-    _df = __df.copy()
-    _df['salary_label'] = _df['salary_label'].fillna('Thỏa thuận')
-    _df['required_gender_specific'] = _df['required_gender_specific'].fillna('Không yêu cầu')
-    _df['job_experience_years'] = _df['job_experience_years'].fillna('Không yêu cầu kinh nghiệm')
-
-    dataCenter = _df.copy()
-    return
-
-def preprocessing():
+def preprocessing(_df, _trans_dict):
     category_cols = ['salary_label', 'job_attributes', 'job_formality', 
                      'required_gender_specific',
                      'job_experience_years']
 
-    # for col in category_cols:
-    #     print(col, "\n______", get_unique(col, dataCenter))
-
-    __data = dataCenter.copy()
-
-    encoded_data = __data[category_cols]
-    for col in encoded_data.columns:
+    _encoded_data = _df[category_cols]
+    for col in _encoded_data.columns:
         try:
-            encoded_data[col] = encoded_data[col].apply(lambda x: trans_data(x,col,trans_dict))
+            _encoded_data[col] = _encoded_data[col].apply(lambda x: trans_data(x,col,_trans_dict))
         except:
             print(col)
 
@@ -130,53 +93,50 @@ def preprocessing():
 
     # for f in features:
     #     encoded_data[f] = encoded_data[f] / encoded_data[f].max()    
-    return
+    return _encoded_data
 
-def train():
-    pred = encoded_data[encoded_data['salary_label'] == 0]
-    train = encoded_data[encoded_data['salary_label'] != 0]
+def train(_encoded_data):
+    _pred = _encoded_data[_encoded_data['salary_label'] == 0]
+    _train = _encoded_data[_encoded_data['salary_label'] != 0]
 
-    # train-test split evaluation random forest on the sonar dataset
-    from pandas import read_csv
-    from sklearn.model_selection import train_test_split
-    from sklearn.ensemble import RandomForestClassifier
-    from sklearn.metrics import accuracy_score
+    # train-test split evaluation random forest
 
-    X = train.drop(columns=['salary_label'])
-    y = train['salary_label']
+    X = _train.drop(columns=['salary_label'])
+    y = _train['salary_label']
 
-    print('Shape:',X.shape, y.shape)
+    # print('Shape:',X.shape, y.shape)
     # split into train test sets
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=6)
-    print('Shape:',X_train.shape, X_test.shape, y_train.shape, y_test.shape)
+    # print('Shape:',X_train.shape, X_test.shape, y_train.shape, y_test.shape)
     # fit the model
-    model = RandomForestClassifier(random_state=1)
-    model.fit(X_train, y_train)
+    _model = RandomForestClassifier(random_state=1)
+    _model.fit(X_train, y_train)
     # make predictions
-    yhat = model.predict(X_test)
+    yhat = _model.predict(X_test)
     # evaluate predictions
     acc = accuracy_score(y_test, yhat)
-    print('Accuracy: %.3f' % acc)
-    return
+    # print('Accuracy: %.3f' % acc)
+    return _model, _pred
 
-def predict():
-    X_pred = pred.drop(columns=['salary_label'])
-    X_pred['salary_label'] = model.predict(X_pred)
+def predict(_model, _pred, _encoded_data):
+    X_pred = _pred.drop(columns=['salary_label'])
+    X_pred['salary_label'] = _model.predict(X_pred)
 
-    pred_data = encoded_data.copy()
-    pred_data['salary_prediction'] = pred_data['salary_label']
+    # pred_data = _encoded_data.copy()
+    # pred_data['salary_prediction'] = pred_data['salary_label']
+    # for i in X_pred.index:
+    #     pred_data.loc[i]['salary_prediction'] = X_pred.loc[i]['salary_label']
+    # pred_data
+
+    _pred_data = _encoded_data.copy()
+    _pred_data['salary_prediction'] = 0
     for i in X_pred.index:
-        pred_data.loc[i]['salary_prediction'] = X_pred.loc[i]['salary_label']
-    pred_data
+        _pred_data.loc[i]['salary_prediction'] = X_pred.loc[i]['salary_label']
+    _pred_data.to_csv(TEMP_STORAGE + "pred_data.csv", index=False)
+    return _pred_data
 
-    __pred_data = encoded_data.copy()
-    __pred_data['salary_prediction'] = 0
-    for i in X_pred.index:
-        __pred_data.loc[i]['salary_prediction'] = X_pred.loc[i]['salary_label']
-    return
-
-def fill_db():
-    trans_dict['inverse_salary_label'] = {
+def fill_db(_trans_dict, _df, _pred_data, data_dir):
+    _trans_dict['inverse_salary_label'] = {
         0:'Không',
         1:'Dưới 5 triệu',
         2:'5 - 10 triệu', 
@@ -187,19 +147,19 @@ def fill_db():
         7:'Trên 30 triệu'
     }
 
-    __data = dataCenter.copy()
-    __data
-
-    __data['salary_prediction'] = __pred_data['salary_prediction']
-    __data['salary_prediction'] = __data['salary_prediction'].replace(trans_dict['inverse_salary_label'])
-    pred_data.to_csv(data_dir+"pred_data.csv", index=False)
+    _df['salary_prediction'] = _pred_data['salary_prediction']
+    _df['salary_prediction'] = _df['salary_prediction'].replace(_trans_dict['inverse_salary_label'])
+    _df.to_csv(data_dir+'dataCenter_pred.csv', index=False)
     return
 
+def prediction(_data, _data_dir):
+    print(colored("[{} | In process]".format(datetime.now()), 'green'), "Predicting Wage Agreement")
+    trans_dict = setup()
+    encoded_data = preprocessing(_data, trans_dict)
+    model, pred = train(encoded_data)
+    pred_data = predict(model, pred, encoded_data)
+    fill_db(trans_dict, _data, pred_data, _data_dir)    
+    return pred_data
 
 if __name__ == '__main__':
-    setup()
-    read_data()
-    preprocessing()
-    train()
-    predict()
-    fill_db()
+    pass

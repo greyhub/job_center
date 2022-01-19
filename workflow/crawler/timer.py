@@ -1,10 +1,14 @@
+from datetime import datetime
 import schedule
 import time 
 import os
+from termcolor import colored
 
 
-def autocrawl():
-    print("Autocrawl...")
+time_per_step = 1  # seconds
+
+def autoCrawl():
+    print(colored("[{}]".format(datetime.now()), 'yellow'), 'Starting Auto Crawl')
     crawl(name="topcv")
     crawl(name="mywork.com")
     crawl(name="careerbuilder")
@@ -13,17 +17,16 @@ def autocrawl():
     return
 
 def crawl(name="topcv"):
+    time.sleep(time_per_step)
     cmd = "scrapy crawl " + name
-    print("In process: " + cmd)
-    time.sleep(5)
-    # os.system(cmd)
+    print(colored("[{} | In process]".format(datetime.now()), 'green'), "{}".format(cmd))
+    os.system(cmd)
+    time.sleep(time_per_step)
     return
 
 
 if __name__ == "__main__":
-
-    schedule.every(10).seconds.do(autocrawl)
-
+    schedule.every(10).seconds.do(autoCrawl)
     while 1:
         schedule.run_pending()
-        time.sleep(1)
+        time.sleep(time_per_step)

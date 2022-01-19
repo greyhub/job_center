@@ -5,7 +5,7 @@ import time
 import os
 from termcolor import colored
 
-from crawler.timer import autoCrawl
+from timer import autoCrawl
 from config import DATA_DIR, DATACENTER, TIME_PER_PIPELINE
 from exploratory.EDA.eda import eda
 from exploratory.prediction.prediction import prediction

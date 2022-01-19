@@ -23,6 +23,8 @@ pip install -r requirements.txt
 
 ## Run
 
+[Option] Open config.py and change parameters
+
 ```zsh
 python pipeline.py
 ```

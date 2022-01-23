@@ -28,7 +28,8 @@ DOWNLOADER_MIDDLEWARES = {
 ITEM_PIPELINES = {
     'test_scrapy.pipelines.TestScrapyPipeline': 300,
 }
-MONGO_URI = 'mongodb://127.0.0.1:27017/'
+# MONGO_URI = 'mongodb://127.0.0.1:27017/'
+MONGO_URI = 'mongodb+srv://Do_an_THHT:Do_an_THHT@cluster0.61ftc.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'
 MONGO_DATABASE = 'crawl'
 
 # DOWNLOAD_DELAY = 7

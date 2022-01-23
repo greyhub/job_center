@@ -5,8 +5,6 @@ from datetime import date
 import time
 from random import randint
 
-from twisted.spread.pb import respond
-
 
 class careerspider(scrapy.Spider):
     name = 'careerbuilder'
@@ -26,7 +24,7 @@ class careerspider(scrapy.Spider):
             jobs = response.xpath('//a[@class="job_link"]')
             for job in jobs:
                 job_url = job.xpath("@href").extract()
-                time.sleep(randint(5, 10))
+                time.sleep(randint(1, 3))
                 yield scrapy.Request(job_url[0], callback=self.job_parse)
         except:
             # with open("careerbuilder/error_url.txt", 'a') as f:
@@ -80,7 +78,9 @@ class careerspider(scrapy.Spider):
                 job['update_time'] = None
 
             try:
-                job['sectors'] = data['industry']
+                sector = data['industry']
+                sectors = re.split(", ", sector)
+                job['sectors'] = sectors
             except:
                 job['sectors'] = None
 
@@ -117,9 +117,17 @@ class careerspider(scrapy.Spider):
             try:
                 job_requirements = data['experienceRequirements']['description']
                 # job_requirements = re.sub("-", "", job_requirements)
-                job['job_requirements '] = job_requirements
+                job['job_requirements'] = job_requirements
             except:
-                job['job_requirements '] = None
+                try:
+                    req = response.xpath('//*[@id="tab-1"]/section/div[4]/ul[1]')
+                    job_req = req.css('*::text').extract()
+                    job_requirements = ""
+                    for s in job_req:
+                        job_requirements += s
+                    job['job_requirements'] = job_requirements
+                except:
+                    job['job_requirements'] = None
 
             try:
                 job['company_name'] = data['identifier']['name']
@@ -138,7 +146,6 @@ class careerspider(scrapy.Spider):
                 job['company_url'] = None
 
             yield job
-
 
         except:
             print()

@@ -1,5 +1,14 @@
 # Pipeline
 
+## Main workflow
+
+1. Crawl
+2. Matching
+3. EDA
+4. Prediction
+5. Ranking
+6. Suggesting
+
 ## Requirements
 - Conda
 - Python

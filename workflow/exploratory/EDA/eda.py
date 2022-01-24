@@ -2,7 +2,8 @@ from datetime import datetime
 import matplotlib.pyplot as plt
 from termcolor import colored
 
-from config import TEMP_STORAGE
+from config import DATACENTER, TEMP_STORAGE
+from workflow.utils import read_data
 
 
 category_cols = ['job_attributes', 'job_formality', 'required_gender_specific',
@@ -30,4 +31,5 @@ def eda(_data):
 
 
 if __name__ == '__main__':
-    pass
+    dataCenter = read_data(DATACENTER)
+    eda(dataCenter)

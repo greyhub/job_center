@@ -1,0 +1,13 @@
+{
+  "name": "lato-font",
+  "_cacheHeaders": {
+    "ETag": "W/\"3906a8c8f5bfad71ae545f704267659f\"",
+    "Content-Type": "text/html; charset=utf-8"
+  },
+  "_release": "e-tag:W/\"3906a8c",
+  "main": "index",
+  "_source": "https://github.com/betsol/lato-font",
+  "_target": "*",
+  "_originalSource": "https://github.com/betsol/lato-font",
+  "_direct": true
+}

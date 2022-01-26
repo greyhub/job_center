@@ -13,7 +13,7 @@ class JobSpider(scrapy.Spider):
         'COLLECTION_NAME': 'vieclam24h'
     }
     # base_url = 'https://vieclam24h.vn'
-    start_urls = ['https://vieclam24h.vn/xay-dung/vinhomes-nhan-vien-ban-giao-quan-9-hcm-c117p122id100152044.html?svs=vl24h.jobbox.trangchu_tuyengap']
+    start_urls = ['https://vieclam24h.vn/kien-truc-tk-noi-that/ky-thuat-vien-thiet-ke-giam-sat-xay-dung-co-opsmile-c148p122id100157743.html']
     # def start_request(self, response):
     #     short_urls = response.xpath('//*[@id="__next"]/main/div[1]/div[2]/div[2]/div[5]/div/div/div/div/span[1]/a[1]/@href').extract()
     #     urls = ['https://vieclam24h.vn' + url for url in short_urls]

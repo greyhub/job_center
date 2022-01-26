@@ -5,18 +5,44 @@ client = MongoClient("mongodb+srv://Do_an_THHT:Do_an_THHT@cluster0.61ftc.mongodb
 lib = pd.read_json("lib.json", encoding="utf8")
 
 database = client["crawl"]
-data = database["topcv"]
+data = database["timviecnhanh"]
 
-# database_new = client["data_matching"]
-# colection = database_new["topcv"]
+# db_new = client["data_matching"]
+# colection = db_new["timviecnhanh"]
 db_new = client["matching-test"]
 colection = db_new["data_matching"]
 
 for dt in data.find():
     # del_id
     del dt["_id"]
+    # date_time
+    dt["update_time"] = pd.to_datetime(dt["update_time"], format="%d-%m-%Y")
+    dt["application_deadline"] = pd.to_datetime(dt["application_deadline"], format="%d-%m-%Y")
+    dt["timestampISOdate"] = pd.to_datetime(dt["timestamp_isodate"], format="%d/%m/%Y")
+    del dt['timestamp_isodate']
+
+    # job_formality
+    try:
+        st = dt["job_formality"]
+        dt["job_formality"] = lib['job_formality'][2][st]
+    except:
+        dt["job_formality"] = "Khác"
+
+    # job_attributes
+    try:
+        st = dt["job_attributes"]
+        dt["job_attributes"] = lib['job_attributes'][2][st]
+    except:
+        dt["job_attributes"] = "Khác"
+
+    # job_experience_years
+    try:
+        st = dt["job_experience_years"]
+        dt["job_experience_years"] = lib['job_experience_years'][2][st]
+    except:
+        continue
+
     # salary
-    dt["salary"] = re.sub("\n", "", dt["salary"])
     salary = re.findall("\d+", dt['salary'])
     try:
         gt = int(salary[0])
@@ -40,15 +66,18 @@ for dt in data.find():
                                 label = "25 - 30 triệu"
                             else:
                                 label = "Trên 30 triệu"
-    #     dt['salary'] = {"label": label, "salary": dt['salary']}
-    # except:
-    #     dt['salary'] = {"label": "Thỏa thuận", "salary": dt['salary']}
         dt["salary_label"] = label
     except:
         dt['salary_label'] = "Thỏa thuận"
-    # datatime
-    dt['application_deadline'] = pd.to_datetime(dt['application_deadline'], format='%d/%m/%Y')
-    dt['timestampISOdate'] = pd.to_datetime(dt['timestampISOdate'], format='%d/%m/%Y')
 
-    # save database
+    # sectors
+    for j in range(len(dt["sectors"])):
+        try:
+            st = dt['sectors'][j]
+            str = lib['sectors'][2][st]
+            dt['sectors'][j] = str
+        except:
+            dt['sectors'][j] = "Ngành nghề khác"
+    dt['sectors'] = list(dict.fromkeys(dt['sectors']))
+
     colection.insert_one(dt)

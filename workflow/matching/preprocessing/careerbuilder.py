@@ -1,21 +1,25 @@
 import pandas as pd
 from pymongo import MongoClient
 import re
-client = MongoClient("mongodb://127.0.0.1:27017/")
+client = MongoClient("mongodb+srv://Do_an_THHT:Do_an_THHT@cluster0.61ftc.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
 lib = pd.read_json("lib.json", encoding="utf8")
 
 db = client["crawl"]
 data = db["careerbuilder"]
 
-db_new = client["data_matching"]
-colection = db_new["careerbuilder"]
+# db_new = client["data_matching"]
+# colection = db_new["careerbuilder"]
+db_new = client["matching-test"]
+colection = db_new["data_matching"]
 
 
 for dt in data.find():
+    # del_id
+    del dt["_id"]
     # data_time
     dt["update_time"] = pd.to_datetime(dt["update_time"], format="%Y-%m-%d")
     dt["application_deadline"] = pd.to_datetime(dt["application_deadline"], format="%Y-%m-%d")
-    dt['timestampISOdate'] = pd.to_datetime(dt['timestampISOdate'], format='%d/%m/%Y')
+    dt["timestampISOdate"] = pd.to_datetime(dt['timestampISOdate'], format='%d/%m/%Y')
 
     # sectors
     for j in range(len(dt["sectors"])):
@@ -86,7 +90,7 @@ for dt in data.find():
         else:
             if gt < 10:
                 label = "5 - 10 triệu"
-            else :
+            else:
                 if gt < 15:
                     label = "10 - 15 triệu"
                 else:
@@ -100,12 +104,15 @@ for dt in data.find():
                                 label = "25 - 30 triệu"
                             else:
                                 label = "Trên 30 triệu"
-        dt['salary'] = {"label": label, "salary": dt['salary']}
+    #     dt['salary'] = {"label": label, "salary": dt['salary']}
+    # except:
+    #     dt['salary'] = {"label": "Thỏa thuận", "salary": dt['salary']}
+        dt["salary_label"] = label
     except:
-        dt['salary'] = {"label": "Thỏa thuận", "salary": dt['salary']}
-
+        dt['salary_label'] = "Thỏa thuận"
     # save_database
     colection.insert_one(dt)
+
 
 
 
